@@ -15,6 +15,7 @@ public class ChannelDemo {
 
     public static void main(String[] args) {
         try(FileChannel channel = new FileInputStream("colin-demo/data.txt").getChannel()) {
+
             // 初始化一个字节缓冲区
             ByteBuffer buffer = ByteBuffer.allocate(10);
 
@@ -37,6 +38,7 @@ public class ChannelDemo {
 
                 // 切换 buffer 的写模式
                 buffer.clear();
+                buffer.compact();
             }while (true);
         } catch (Exception e) {
             e.printStackTrace();
