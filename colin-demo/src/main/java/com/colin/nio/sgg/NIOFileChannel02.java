@@ -13,6 +13,10 @@ public class NIOFileChannel02 {
 
     public static void main(String[] args) throws Exception {
 
+        /**
+         * 读取 file01.txt 文件中的内容
+         */
+
         // 创建一个输入流
         File file = new File("colin-demo/file01.txt");
         FileInputStream fileInputStream = new FileInputStream(file);

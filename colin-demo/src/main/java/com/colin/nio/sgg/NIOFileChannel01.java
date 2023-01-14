@@ -12,6 +12,10 @@ public class NIOFileChannel01 {
 
     public static void main(String[] args) throws Exception {
 
+        /**
+         * 向 file01.txt 中写入内容
+         */
+
         String str = "hello colin";
 
         // 创建一个输出流

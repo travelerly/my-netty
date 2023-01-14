@@ -12,6 +12,10 @@ public class NIOFileChannel04 {
 
     public static void main(String[] args) throws Exception {
 
+        /**
+         * Arsenal.jpeg → Arsenal_copy.jpeg
+         */
+
         // 创建文件输入流对象
         FileInputStream fileInputStream = new FileInputStream("colin-demo/Arsenal.jpeg");
         // 获取输入流对象对应的 channel
