@@ -18,7 +18,7 @@ public class NIOFileChannel02 {
          */
 
         // 创建一个输入流
-        File file = new File("colin-demo/file01.txt");
+        File file = new File("colin-demo/file/file01.txt");
         FileInputStream fileInputStream = new FileInputStream(file);
         // 通过输入流获取对应的 FileChannel，实际类型是 FileChannelImpl
         FileChannel channel = fileInputStream.getChannel();

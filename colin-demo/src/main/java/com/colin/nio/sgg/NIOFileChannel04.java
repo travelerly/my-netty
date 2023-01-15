@@ -17,12 +17,12 @@ public class NIOFileChannel04 {
          */
 
         // 创建文件输入流对象
-        FileInputStream fileInputStream = new FileInputStream("colin-demo/Arsenal.jpeg");
+        FileInputStream fileInputStream = new FileInputStream("colin-demo/file/Arsenal.jpeg");
         // 获取输入流对象对应的 channel
         FileChannel inputStreamChannel = fileInputStream.getChannel();
 
         // 创建文件输出流对象
-        FileOutputStream fileOutputStream = new FileOutputStream("colin-demo/Arsenal_copy.jpeg");
+        FileOutputStream fileOutputStream = new FileOutputStream("colin-demo/file/Arsenal_copy.jpeg");
         // 获取输出流对象对应的 chennel
         FileChannel outputStreamChannel = fileOutputStream.getChannel();
 
