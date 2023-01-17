@@ -40,6 +40,7 @@ public class GroupChatServer {
 
     // 监听相关逻辑
     public void listen(){
+        log.debug("监听线程为：{}",Thread.currentThread().getName());
         try {
             while (true){
                 int count = selector.select();
@@ -122,7 +123,7 @@ public class GroupChatServer {
     // 向其它客户端转发消息(去掉自己)
     private void sendInfoToOtherClients(String msg,SocketChannel self) throws IOException {
         // 先给出提示
-        log.debug("服务器转发消息中 …… ");
+        log.debug("服务器转发消息中 …… ，服务器转发的线程为：{}",Thread.currentThread().getName());
 
         // 遍历所有注册到 Selector 上的 SocketChannel，并排除自己 self
         for (SelectionKey key : selector.keys()) {
