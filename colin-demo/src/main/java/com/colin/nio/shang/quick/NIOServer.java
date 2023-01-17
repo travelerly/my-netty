@@ -1,6 +1,8 @@
 package com.colin.nio.shang.quick;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -14,6 +16,7 @@ import java.util.Set;
  * @author: colin
  * @Create: 2023/1/15 19:38
  */
+@Slf4j
 public class NIOServer {
 
     public static void main(String[] args) throws Exception {
@@ -38,7 +41,7 @@ public class NIOServer {
             // 等待 1s，若没有事件发生，则继续下一次循环
             if (selector.select(1000) == 0){
                 // 说明此时没有事件发生，
-                System.out.println("服务器等待了 1s，无连接");
+                log.debug("服务器等待了 1s，无连接");
                 continue;
             }
 
@@ -55,10 +58,12 @@ public class NIOServer {
                 if (key.isAcceptable()) {
                     // 获取对应的 SocketChannel
                     SocketChannel socketChannel = serverSocketChannel.accept();
-                    /**
-                     * 将 socketChannel 也注册到 Selector 上，关心的事件是 OP_READ，同时给 socketChannel 关联一个 buffer
-                     */
-                    SelectionKey channelSelectionKey = socketChannel.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(1024));
+                    log.debug("客户端链接成功，生成了一个 SocketChannel：{}",socketChannel.hashCode());
+                    // 将 SocketChannel 设置为非阻塞模式
+                    socketChannel.configureBlocking(false);
+
+                    // 将 socketChannel 也注册到 Selector 上，关心的事件是 OP_READ，同时给 socketChannel 关联一个 buffer
+                    SelectionKey channelSelectionKey = socketChannel.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(15));
                 }
 
                 // 发生了 OP_READ 事件
@@ -70,7 +75,7 @@ public class NIOServer {
 
                     // 将 channel 中的数据读取到 buffer 中
                     int len = channel.read(buffer);
-                    System.out.println("from 客户端：" + new String(buffer.array()));
+                    log.debug("from 客户端：{}",new String(buffer.array()));
                 }
 
                 // 手动删除 SelectionKey，防止重复操作
