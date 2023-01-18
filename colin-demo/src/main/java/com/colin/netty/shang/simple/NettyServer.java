@@ -1,10 +1,7 @@
 package com.colin.netty.shang.simple;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -24,6 +21,7 @@ public class NettyServer {
          * 1.创建两个线程组：bossGroup 和 workerGroup
          * 2.bossGroup 只处理连接请求，workerGroup 处理客户端的业务请求
          * 3.两个线程组内部都是无限循环
+         * 4.bossGroup 和 workerGroup 所包含的子线程（EventLoop）数量是可以指定的，默认的数量是 CPU 核数的两倍
          */
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -48,6 +46,17 @@ public class NettyServer {
 
             // 启动服务器（绑定端口并同步），生成一个 ChannelFuture 对象
             ChannelFuture channelFuture = serverBootstrap.bind(6668).sync();
+            // 为 ChannelFuture 添加监听器
+            channelFuture.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if (channelFuture.isSuccess()){
+                        log.debug("监听 6668 端口成功");
+                    } else {
+                        log.debug("监听 6668 端口失败");
+                    }
+                }
+            });
 
             // 对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
