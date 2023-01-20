@@ -58,6 +58,7 @@ public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implemen
     }
 
     /**
+     * 通道就绪事件
      * Calls {@link ChannelHandlerContext#fireChannelActive()} to forward
      * to the next {@link ChannelInboundHandler} in the {@link ChannelPipeline}.
      *
@@ -70,6 +71,7 @@ public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implemen
     }
 
     /**
+     * 通道非活动状态事件
      * Calls {@link ChannelHandlerContext#fireChannelInactive()} to forward
      * to the next {@link ChannelInboundHandler} in the {@link ChannelPipeline}.
      *
@@ -82,6 +84,7 @@ public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implemen
     }
 
     /**
+     * 通道读取数据事件
      * Calls {@link ChannelHandlerContext#fireChannelRead(Object)} to forward
      * to the next {@link ChannelInboundHandler} in the {@link ChannelPipeline}.
      *
@@ -94,6 +97,7 @@ public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implemen
     }
 
     /**
+     * 通道数据读取完毕事件
      * Calls {@link ChannelHandlerContext#fireChannelReadComplete()} to forward
      * to the next {@link ChannelInboundHandler} in the {@link ChannelPipeline}.
      *

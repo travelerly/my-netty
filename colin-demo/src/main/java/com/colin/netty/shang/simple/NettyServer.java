@@ -33,6 +33,7 @@ public class NettyServer {
                     .channel(NioServerSocketChannel.class) // 使用 NioSocketChannel 作为服务器的通道实现
                     .option(ChannelOption.SO_BACKLOG, 128) // 设置线程队列等待连接的个数
                     .childOption(ChannelOption.SO_KEEPALIVE, true) // 设置保持活动连接状态
+                    .handler(null) // 给 bossGroup 中 EventLoop 对应的管道设置处理器
                     .childHandler(new ChannelInitializer<SocketChannel>() { // 创建一个通道初始化对象（匿名对象方式）
                         // 给 pipline 设置处理器
                         @Override
