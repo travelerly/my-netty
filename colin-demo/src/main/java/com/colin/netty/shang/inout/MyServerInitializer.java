@@ -15,7 +15,9 @@ public class MyServerInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = ch.pipeline();
 
         // 加入入站的解码器
-        pipeline.addLast(new MyByteToLongDecoder());
+        /*pipeline.addLast(new MyByteToLongDecoder());*/
+        pipeline.addLast(new MyNewByteToLongDecoder());
+
 
         // 加入出站的编码器
         pipeline.addLast(new MyLongToByteEncoder());
