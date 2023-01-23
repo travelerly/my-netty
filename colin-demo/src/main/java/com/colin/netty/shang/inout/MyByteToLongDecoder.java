@@ -24,7 +24,7 @@ public class MyByteToLongDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 
-        log.debug("MyByteToLongDecoder 的 decode() 方法被调用，对数据尽心解码");
+        log.debug("MyByteToLongDecoder 的 decode() 方法被调用，对数据进行解码");
 
         /**
          * long 为 8 个字节，每次读取都需要判断是否满足 8 个字节，满足才能进行读取

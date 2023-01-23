@@ -13,6 +13,8 @@ public class MyServerHandler extends SimpleChannelInboundHandler<Long> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Long msg) throws Exception {
         log.debug("从客户端 {} 读取到的 long 数据为 {}",ctx.channel().remoteAddress(),msg);
+        // 给客户端发送一个 Long
+        ctx.writeAndFlush(98765L);
     }
 
     @Override

@@ -11,9 +11,15 @@ import io.netty.channel.socket.SocketChannel;
 public class MyServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
+
         ChannelPipeline pipeline = ch.pipeline();
+
         // 加入入站的解码器
         pipeline.addLast(new MyByteToLongDecoder());
+
+        // 加入出站的编码器
+        pipeline.addLast(new MyLongToByteEncoder());
+
         pipeline.addLast(new MyServerHandler());
     }
 }
