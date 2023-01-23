@@ -1,0 +1,43 @@
+// 指定版本
+syntax = "proto3";
+
+// 加快解析（快速解析）
+option optimize_for = SPEED;
+
+// 指定生成文件的包地址
+option java_package = "com.colin.netty.shang.codec.advanced";
+
+// 指定生成的外部类名称，同时也是文件名
+option java_outer_classname = "MyPOJO";
+
+// Protobuf 可以使用 message 管理其它的 message
+message MyMessage{
+  // 定义一个枚举类型
+  enum DataType{
+    // proto 3 规定 enum 的编号从 0 开始
+    UserType = 0;
+    WorkerType = 1;
+  }
+
+  // 使用 data_type 来标识传入的枚举类型，1 标识序号，即 data_type 是 MyMessage 的第一个属性。
+  DataType data_type = 1;
+
+  // 表示每次枚举类型最多只能出现其中的一个，节省空间
+  oneof dataBody{
+      User user = 2;
+      Worker worker = 3;
+  }
+}
+
+
+message User{
+  // 内部类 User 的属性
+  int32 id = 1;
+  string name = 2;
+}
+
+message Worker{
+  // 内部类 worker 的属性
+  string name = 1;
+  int32 age = 2;
+}
