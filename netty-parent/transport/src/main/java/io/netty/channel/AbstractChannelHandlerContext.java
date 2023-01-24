@@ -1054,7 +1054,7 @@ abstract class AbstractChannelHandlerContext implements ChannelHandlerContext, R
         EventExecutor currentExecutor = executor();
         do {
             ctx = ctx.next;
-        } while (skipContext(ctx, currentExecutor, mask, MASK_ONLY_INBOUND));
+        } while (skipContext(ctx, currentExecutor, mask, MASK_ONLY_INBOUND)); // 必须是 inbound
         return ctx;
     }
 
@@ -1063,7 +1063,7 @@ abstract class AbstractChannelHandlerContext implements ChannelHandlerContext, R
         EventExecutor currentExecutor = executor();
         do {
             ctx = ctx.prev;
-        } while (skipContext(ctx, currentExecutor, mask, MASK_ONLY_OUTBOUND));
+        } while (skipContext(ctx, currentExecutor, mask, MASK_ONLY_OUTBOUND)); // 必须是 outbound
         return ctx;
     }
 

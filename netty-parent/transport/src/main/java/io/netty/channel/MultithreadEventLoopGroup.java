@@ -50,7 +50,7 @@ public abstract class MultithreadEventLoopGroup extends MultithreadEventExecutor
      * @see MultithreadEventExecutorGroup#MultithreadEventExecutorGroup(int, Executor, Object...)
      */
     protected MultithreadEventLoopGroup(int nThreads, Executor executor, Object... args) {
-        // DEFAULT_EVENT_LOOP_THREADS：默认的线程数量为 CPU 核数的两倍
+        // DEFAULT_EVENT_LOOP_THREADS：默认的线程数量为 CPU 核数的两倍。（有静态代码块赋值）
         super(nThreads == 0 ? DEFAULT_EVENT_LOOP_THREADS : nThreads, executor, args);
     }
 

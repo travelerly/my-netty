@@ -40,7 +40,15 @@ public final class EchoServer {
         // Configure SSL.
         final SslContext sslCtx = ServerUtil.buildSslContext();
 
-        // Configure the server.
+        /**
+         * Configure the server.
+         * 1.EventLoopGroup 是 netty 的核心对象，netty 的运作依赖于它，bossGroup 用于接收 TCP 请求，
+         *       它会将请求交给 workerGroup，workerGroup 会获得真正的连接，然后和连接进行通信，例如：读、写、编码、解码等 ……
+         * 2.EventLoopGroup 是事件循环组（线程组），含有多个 EventLoop，可以注册 channel，用于在事件循环中去进行选择(和选择器相关)
+         * 3.创建 EventLoopGroup 对象时，可以指定循环组的线程数，
+         *      一般 bossGroup 设置为 1 个线程；
+         *      若不指定线程数，则默认线程数为 CPU 核数的两倍，即可以充分利用多核 CPU 的优势
+         */
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         final EchoServerHandler serverHandler = new EchoServerHandler();

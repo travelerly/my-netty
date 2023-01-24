@@ -15,8 +15,6 @@
  */
 package io.netty.util.concurrent;
 
-import static io.netty.util.internal.ObjectUtil.checkPositive;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -25,6 +23,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static io.netty.util.internal.ObjectUtil.checkPositive;
 
 /**
  * Abstract base class for {@link EventExecutorGroup} implementations that handles their tasks with multiple threads at
@@ -63,24 +63,28 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
     /**
      * Create a new instance.
      *
-     * @param nThreads          the number of threads that will be used by this instance.
-     * @param executor          the Executor to use, or {@code null} if the default should be used.
-     * @param chooserFactory    the {@link EventExecutorChooserFactory} to use.
-     * @param args              arguments which will passed to each {@link #newChild(Executor, Object...)} call
+     * @param nThreads          线程数，默认为 CPU 核数的两倍。the number of threads that will be used by this instance.
+     * @param executor          执行器，采用 netty 默认的线程工厂和默认的执行器 ThreadPerTaskExecutor。the Executor to use, or {@code null} if the default should be used.
+     * @param chooserFactory    单例 DefaultEventExecutorChooserFactory。the {@link EventExecutorChooserFactory} to use.
+     * @param args              在创建执行器时，传入的固定参数。arguments which will passed to each {@link #newChild(Executor, Object...)} call
      */
     protected MultithreadEventExecutorGroup(int nThreads, Executor executor,
                                             EventExecutorChooserFactory chooserFactory, Object... args) {
         checkPositive(nThreads, "nThreads");
 
         if (executor == null) {
+            // 若传入的执行器为 null，则采用默认的线程工厂和默认的执行器创建执行器
             executor = new ThreadPerTaskExecutor(newDefaultThreadFactory());
         }
 
+        // 创建指定线程数的执行器数组 EventExecutor[] children
         children = new EventExecutor[nThreads];
 
+        // 初始化线程数组
         for (int i = 0; i < nThreads; i ++) {
             boolean success = false;
             try {
+                // 创建 NioEventLoop
                 children[i] = newChild(executor, args);
                 success = true;
             } catch (Exception e) {
@@ -89,6 +93,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
             } finally {
                 if (!success) {
                     for (int j = 0; j < i; j ++) {
+                        // 如果创建失败，则优雅关闭
                         children[j].shutdownGracefully();
                     }
 
@@ -120,9 +125,11 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
         };
 
         for (EventExecutor e: children) {
+            // 为每一个单例线程池添加一个关闭监听器
             e.terminationFuture().addListener(terminationListener);
         }
 
+        // 键所有的线程池添加到一个 HashSet 中进行管理
         Set<EventExecutor> childrenSet = new LinkedHashSet<EventExecutor>(children.length);
         Collections.addAll(childrenSet, children);
         readonlyChildren = Collections.unmodifiableSet(childrenSet);

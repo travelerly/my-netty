@@ -212,6 +212,11 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             setAttributes(child, childAttrs);
 
             try {
+                /**
+                 * 将客户端连接注册到 worker 线程池
+                 * 将 NIOSocketChannel 注册到 childGroup 中的一个 EventLoop 上，并添加一个监听器
+                 * childGroup 就是 workerGroup
+                 */
                 childGroup.register(child).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {

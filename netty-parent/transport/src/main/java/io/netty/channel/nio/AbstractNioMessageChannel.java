@@ -65,6 +65,7 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
 
         @Override
         public void read() {
+            // 检查 eventLoop 线程是否为当前线程
             assert eventLoop().inEventLoop();
             final ChannelConfig config = config();
             final ChannelPipeline pipeline = pipeline();
@@ -76,6 +77,10 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
             try {
                 try {
                     do {
+                        /**
+                         * 读取 boss 线程中的 NioServerSocketChannel 接收到的请求，并将这些请求放进容器中
+                         * 即通过 ServerSocket 的 accept() 方法获取到 TCP 连接，然后封装成 Netty 的 NioSocketChannel 对象，最后添加到容器中。
+                         */
                         int localRead = doReadMessages(readBuf);
                         if (localRead == 0) {
                             break;
@@ -94,6 +99,7 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
                 int size = readBuf.size();
                 for (int i = 0; i < size; i ++) {
                     readPending = false;
+                    //
                     pipeline.fireChannelRead(readBuf.get(i));
                 }
                 readBuf.clear();
