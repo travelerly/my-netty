@@ -94,3 +94,7 @@ public abstract class ByteBuffer extends Buffer implements Comparable<ByteBuffer
     - DatagramChannel：用于 UDP 的数据读写；
     - ServerSocketChannel：用于 TCP 的数据读写，类似 ServerSocket，可以理解为 server
     -  SocketChannel：用于 TCP 的数据读写，类似 Socket，可以理解为 Channel
+
+
+
+> 文档待整理
