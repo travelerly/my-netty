@@ -108,9 +108,24 @@ public class IdleStateHandler extends ChannelDuplexHandler {
         }
     };
 
+    /**
+     * 是否考虑出站时较慢的情况，默认是 false
+     */
     private final boolean observeOutput;
+
+    /**
+     * 读事件空闲时间，0：表示禁用事件
+     */
     private final long readerIdleTimeNanos;
+
+    /**
+     * 写事件的空闲时间，0：表示禁用事件
+     */
     private final long writerIdleTimeNanos;
+
+    /**
+     * 读或写的空闲时间，0：表示禁用事件
+     */
     private final long allIdleTimeNanos;
 
     private Future<?> readerIdleTimeout;
@@ -305,6 +320,10 @@ public class IdleStateHandler extends ChannelDuplexHandler {
         }
     }
 
+    /**
+     *
+     * @param ctx
+     */
     private void initialize(ChannelHandlerContext ctx) {
         // Avoid the case where destroy() is called before scheduling timeouts.
         // See: https://github.com/netty/netty/issues/143
@@ -320,15 +339,25 @@ public class IdleStateHandler extends ChannelDuplexHandler {
         initOutputChanged(ctx);
 
         lastReadTime = lastWriteTime = ticksInNanos();
+
+        /**
+         * 只要给定参数大于 0，就会创建一个定时任务，每个事件(读事件、写事件、读或写事件)都会创建。
+         * 同时将 state 状态设置为 1，防止重复初始化，调用 initOutPutChanged() 方法，初始化-"监控出站数据属性"
+         */
         if (readerIdleTimeNanos > 0) {
+            /**
+             * 这里的 schedule() 方法会调用 eventLoop 的 schedule() 方法，将定时任务添加进队列中
+             */
             readerIdleTimeout = schedule(ctx, new ReaderIdleTimeoutTask(ctx),
                     readerIdleTimeNanos, TimeUnit.NANOSECONDS);
         }
         if (writerIdleTimeNanos > 0) {
+            // 同上
             writerIdleTimeout = schedule(ctx, new WriterIdleTimeoutTask(ctx),
                     writerIdleTimeNanos, TimeUnit.NANOSECONDS);
         }
         if (allIdleTimeNanos > 0) {
+            // 同上
             allIdleTimeout = schedule(ctx, new AllIdleTimeoutTask(ctx),
                     allIdleTimeNanos, TimeUnit.NANOSECONDS);
         }
@@ -458,6 +487,10 @@ public class IdleStateHandler extends ChannelDuplexHandler {
         return false;
     }
 
+    /**
+     * 定时任务的父类，提供了一些模板方法
+     * ReaderIdleTimeoutTask、WriterIdleTimeoutTask、AllIdleTimeoutTask 继承了 AbstractIdleTask
+     */
     private abstract static class AbstractIdleTask implements Runnable {
 
         private final ChannelHandlerContext ctx;
@@ -466,8 +499,12 @@ public class IdleStateHandler extends ChannelDuplexHandler {
             this.ctx = ctx;
         }
 
+        /**
+         * 模板方法，即通道关闭后就不再执行定时任务，否则执行定时任务，具体逻辑由子类完善
+         */
         @Override
         public void run() {
+
             if (!ctx.channel().isOpen()) {
                 return;
             }
@@ -478,6 +515,9 @@ public class IdleStateHandler extends ChannelDuplexHandler {
         protected abstract void run(ChannelHandlerContext ctx);
     }
 
+    /**
+     * 对应读事件的定时任务
+     */
     private final class ReaderIdleTimeoutTask extends AbstractIdleTask {
 
         ReaderIdleTimeoutTask(ChannelHandlerContext ctx) {
@@ -486,6 +526,7 @@ public class IdleStateHandler extends ChannelDuplexHandler {
 
         @Override
         protected void run(ChannelHandlerContext ctx) {
+            // 获取用户设置的超时时间
             long nextDelay = readerIdleTimeNanos;
             if (!reading) {
                 nextDelay -= ticksInNanos() - lastReadTime;
@@ -511,6 +552,9 @@ public class IdleStateHandler extends ChannelDuplexHandler {
         }
     }
 
+    /**
+     * 对应写事件的定时任务
+     */
     private final class WriterIdleTimeoutTask extends AbstractIdleTask {
 
         WriterIdleTimeoutTask(ChannelHandlerContext ctx) {
@@ -546,6 +590,9 @@ public class IdleStateHandler extends ChannelDuplexHandler {
         }
     }
 
+    /**
+     * 对应读或写事件的定时任务
+     */
     private final class AllIdleTimeoutTask extends AbstractIdleTask {
 
         AllIdleTimeoutTask(ChannelHandlerContext ctx) {
